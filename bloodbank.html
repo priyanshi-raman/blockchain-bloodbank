@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redlife Blood Bank</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+	<header class="header">
+        <a href="index.html" class="logo"> <i class="fas fa-heartbeat"> </i> RedLife. </a>
+        <nav class="navbar">
+            <a href="index.html"> Home </a>
+            <a href="index.html"> Services </a>
+            <a href="index.html"> About </a>
+            <a href="index.html"> Contact Us </a>
+        </nav>
+
+        <div id="menubutton" class="fas fa-bars"> </div>
+    </header>
+	
+    <div class="donate">   
+        <div class="content">
+			<h3> CURRENT COUNT </h3>
+			<table>
+				<tr>
+				  <th>Blood Group</th>
+				  <th>Units Available</th>
+				</tr>
+				<tr>
+				  <td>(1) O+</td>
+				  <td id="Opos"></td>
+				</tr>
+				<tr>
+				  <td>(2) O-</td>
+				  <td id="Oneg"></td>
+				</tr>
+				<tr>
+					<td>(3) A+</td>
+					<td id="Apos"></td>
+				</tr>
+				<tr>
+					<td>(4) A-</td>
+					<td id="Aneg"></td>
+				</tr>
+				<tr>
+					<td>(5) B+</td>
+					<td id="Bpos"></td>
+				</tr>
+				<tr>
+					<td>(6) B-</td>
+					<td id="Bneg"></td>
+				</tr>
+				<tr>
+					<td>(7) AB+</td>
+					<td id="ABpos"></td>
+				</tr>
+				<tr>
+					<td>(8) AB-</td>
+					<td id="ABneg"></td>
+				</tr>
+			  </table> <br> <br>
+			<h3> MAKE A DONATION </h3>
+			<div class="donation">
+				<p>First name of the donor:</p>
+				<input type="text" id="donorfirstname">
+				<p>Last name of the donor:</p>
+				<input type="text" id="donorlastname">
+				<p>Blood Group:</p>
+				<input type="text" id="bloodgroup">
+				<p>Number of units:</p>
+				<input type="text" id="unitsnumber"> <br> <br>
+				<button id="addDonor" class="btn"> <a href="#"> <span> Add Donor </span> </a></button> <br> <br>
+			</div>
+		<h3> UPDATE DONATION INFO </h3>
+			<div class="update">
+				<p>Donor ID:</p>
+				<input type="text" id="donorID">
+				<p>Number of units:</p>
+				<input type="text" id="updatedunits"> <br> <br>
+				<button id="updateDonor" class="btn"> <a href="#"> <span> Update Donor </span></a></button> <br> <br>
+			</div>
+		<h3> REQUEST BLOOD UNITS </h3>
+		<div class="request">
+			    <p>First name of the patient:</p>
+				<input type="text" id="patientfirstname">
+				<p>Last name of the patient:</p>
+				<input type="text" id="patientlastname">
+				<p>Blood Group:</p>
+				<input type="text" id="reqgroup">
+				<p>Number of units:</p>
+				<input type="text" id="requnits"> <br> <br>
+				<button id="reqBlood" class="btn"> <a href="#"> <span> Request Blood </span> </a></button> <br> <br>
+		</div>
+		</div>
+    </div>
+	<script src="script.js"> </script>   
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+    <script>
+		var contract;
+		$(document).ready(function()
+		{
+			web3 = new Web3(web3.currentProvider);
+			var address = "0x1674DB3cE192dc0bFf00D77E7aaBB8e5302FfA37";
+			var abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_bloodGroup",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_numberUnits",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_bloodDonated",
+				"type": "bool"
+			}
+		],
+		"name": "addDonor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_bloodGroup",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_numberUnits",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_bloodRequested",
+				"type": "bool"
+			}
+		],
+		"name": "addPatient",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getUnitCount",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_donorID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_numberUnits",
+				"type": "uint256"
+			}
+		],
+		"name": "updateDonor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "ABnegCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "ABposCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "allDonors",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "donorID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "bloodGroup",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "numberUnits",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "bloodDonated",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "allPatients",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "patientID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "bloodGroup",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "numberUnits",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "bloodRequested",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "AnegCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "AposCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "BnegCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "BposCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "donorCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "OnegCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "OposCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "patientCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "requestCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+			contract = new web3.eth.Contract(abi, address);
+			contract.methods.getUnitCount().call().then(function(unitCount)
+			{
+				$('#Opos').html(unitCount[0]);
+				$('#Oneg').html(unitCount[1]);
+				$('#Apos').html(unitCount[2]);
+				$('#Aneg').html(unitCount[3]);
+				$('#Bpos').html(unitCount[4]);
+				$('#Bneg').html(unitCount[5]);
+				$('#ABpos').html(unitCount[6]);
+				$('#ABneg').html(unitCount[7]);
+			});
+		}
+		)
+
+		$('#addDonor').click(function()
+		{
+			var donorfirstname = $('#donorfirstname').val();
+			var donorlastname = $('#donorlastname').val();
+			var bloodgroup = parseInt($('#bloodgroup').val());
+			var unitsnumber = parseInt($('#unitsnumber').val()); 
+			var blooddonated = true;
+			contract.methods.addDonor(donorfirstname, donorlastname, bloodgroup, unitsnumber, blooddonated).send({from: "0x50Ab8E963b18aa463216De3DeF587e4cCa3C43ca"});
+			
+		})
+
+		$('#updateDonor').click(function()
+		{
+			var donorID = parseInt($('#donorID').val());
+			console.log(donorID, "id");
+			var unitsnumber = parseInt($('#updatedunits').val()); 
+			console.log(unitsnumber, "units");
+			contract.methods.updateDonor(donorID, unitsnumber).send({from: "0x50Ab8E963b18aa463216De3DeF587e4cCa3C43ca"});
+			
+		})
+
+		$('#reqBlood').click(function()
+		{
+			var patientfirstname = $('#patientfirstname').val();
+			var patientlastname = $('#patientlastname').val();
+			var bloodgroup = parseInt($('#reqgroup').val());
+			var unitsnumber = parseInt($('#requnits').val()); 
+			var bloodRequested = true;
+			contract.methods.addPatient(patientfirstname, patientlastname, bloodgroup, unitsnumber, bloodRequested).send({from: "0x50Ab8E963b18aa463216De3DeF587e4cCa3C43ca"});
+			
+		})
+	</script>  
+
+	
+
+</body>
+</html>
